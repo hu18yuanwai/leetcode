@@ -38,3 +38,37 @@ public:
         return constructTree(head,cur);
     }
 };
+
+
+//http://www.jianshu.com/p/559f68c13283
+class Solution
+{
+public:
+    TreeNode* sortedListToBST(ListNode* head)
+    {
+        if (head == nullptr)
+        {
+            return nullptr;
+        }
+        else if (head->next == nullptr)
+        {
+            return new TreeNode(head->val);
+        }
+
+        // 让p->next为中间节点，p->next->next为右半边链表，p为左半边链表的尾节点。
+        auto p = head;
+        auto q = head->next->next;
+        while (q != nullptr && q->next != nullptr)
+        {
+            p = p->next;
+            q = q->next->next;
+        }
+
+        // 用p->next构造根节点，它左边的链表构造左子树，右边的链表构造右子树。
+        auto node = new TreeNode(p->next->val);
+        node->right = sortedListToBST(p->next->next);
+        p->next = nullptr;
+        node->left = sortedListToBST(head);
+        return node;
+    }
+};
