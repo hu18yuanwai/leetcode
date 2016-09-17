@@ -37,3 +37,69 @@ ListNode* reverseKGroup(ListNode* head, int k) {
 
       return re;
 }
+
+
+
+class Solution
+{
+public:
+    ListNode* reverseKGroup(ListNode* head, int k)
+    {
+        ListNode *resHead = nullptr;
+        ListNode *resTail = nullptr;
+
+        auto kth = findKthNode(head, k);
+        while (kth != nullptr)
+        {
+            auto first = head;
+            auto last = kth;
+            head = kth->next;
+            last->next = nullptr;
+
+            reverseList(first);
+            appendToList(resHead, resTail, last, first);
+            kth = findKthNode(head, k);
+        }
+
+        appendToList(resHead, resTail, head, nullptr);
+        return resHead;
+    }
+
+private:
+    ListNode* findKthNode(ListNode *head, int k)
+    {
+        for (int i = 1; i < k && head != nullptr; i++)
+        {
+            head = head->next;
+        }
+        return head;
+    }
+
+    ListNode* reverseList(ListNode *head)
+    {
+        ListNode *res = nullptr;
+        while (head != nullptr)
+        {
+            auto node = head;
+            head = head->next;
+
+            node->next = res;
+            res = node;
+        }
+        return res;
+    }
+
+    void appendToList(ListNode *&head1, ListNode *&tail1, ListNode *head2, ListNode *tail2)
+    {
+        if (head1 == nullptr)
+        {
+            head1 = head2;
+            tail1 = tail2;
+        }
+        else
+        {
+            tail1->next = head2;
+            tail1 = tail2;
+        }
+    }
+};

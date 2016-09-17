@@ -56,3 +56,75 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
   }
   return helper->next;
 }
+
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution
+{
+public:
+    ListNode* mergeKLists(vector<ListNode*> &lists)
+    {
+        // 创建一个最小值堆，把每个链表的头节点加入堆里。
+        vector<ListNode**> minHeap;
+        for (auto &p : lists)
+        {
+            if (p != nullptr)
+            {
+                minHeap.push_back(&p);
+            }
+        }
+        make_heap(minHeap.begin(), minHeap.end(), compare);
+
+        ListNode *head = nullptr;
+        ListNode *tail = nullptr;
+        while (!minHeap.empty())
+        {
+            // 从堆中弹出最小值
+            pop_heap(minHeap.begin(), minHeap.end(), compare);
+            auto p = minHeap.back();
+            minHeap.pop_back();
+
+            // 找出最小值所在链表的下一个节点，将其压入堆中。
+            auto node = (*p);
+            (*p) = (*p)->next;
+            if ((*p) != nullptr)
+            {
+                minHeap.push_back(p);
+                push_heap(minHeap.begin(), minHeap.end(), compare);
+            }
+
+            // 把这个最小值放到结果中
+            node->next = nullptr;
+            appendToList(head, tail, node);
+        }
+        return head;
+    }
+
+private:
+    // 最小值堆的比较函数
+    static bool compare(ListNode **p1, ListNode **p2)
+    {
+        return (*p1)->val > (*p2)->val;
+    }
+
+    // 把node添加到tail的后面，始终保持head、tail为链表的首尾节点。
+    inline void appendToList(ListNode *&head, ListNode *&tail, ListNode *node)
+    {
+        if (head == nullptr)
+        {
+            head = tail = node;
+        }
+        else
+        {
+            tail->next = node;
+            tail = node;
+        }
+    }
+};
