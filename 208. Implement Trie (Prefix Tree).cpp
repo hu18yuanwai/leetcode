@@ -1,8 +1,129 @@
+class TrieNode {
+public:
+    char content;
+    bool isEnd;
+    int count;
+    list<TrieNode*> childList;
+    // Initialize your data structure here.
+    TrieNode(char c) {
+        content=c;
+        isEnd=false;
+        count=0;
+    }
+
+    TrieNode(){
+        content=0;
+        isEnd=false;
+        count=0;
+    }
+
+    TrieNode* subNode(char c){
+        if(childList.size()==0) return NULL;
+        for(auto i = childList.begin();i!=childList.end();i++){
+            if((*i)->content==c) return *i;
+        }
+        return NULL;
+    }
+};
+
+class Trie {
+public:
+    Trie() {
+        root = new TrieNode();
+    }
+
+    // Inserts a word into the trie.
+    void insert(string word) {
+        if(search(word)==true) return;
+
+        TrieNode *current =root;
+        for(int i=0;i<word.size();i++){
+            TrieNode* child  = current->subNode(word[i]);
+            if(child!=NULL){
+                current = child;
+            }else{
+                current->childList.push_back(new TrieNode(word[i]));
+                current=current->subNode(word[i]);
+            }
+            current->count++;
+        }
+        current->isEnd=true;
+    }
+
+    // Returns if the word is in the trie.
+    bool search(string word) {
+        TrieNode* current = root;
+        for(int i=0;i<word.size();i++){
+            if(current->subNode(word[i])==NULL)
+                return false;
+            else
+                current = current->subNode(word[i]);
+        }
+
+        if(current->isEnd==true) return true;
+        return false;
+    }
+
+    // Returns if there is any word in the trie
+    // that starts with the given prefix.
+    bool startsWith(string prefix) {
+        TrieNode* current = root;
+        for(int i=0;i<prefix.size();i++){
+            if(current->subNode(prefix[i])==NULL) return false;
+            else current = current->subNode(prefix[i]);
+        }
+        return true;
+    }
+
+    void deleteNode(TrieNode* p){
+        if(p==NULL) return;
+        for(auto i=p->childList.begin();i!=childList.end();i++){
+            deleteNode(*i);
+        }
+        delete p;
+    }
+
+    ~Trie(){
+        deleteNode(root);    
+    }
+private:
+    TrieNode* root;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <iostream>
 #include <string>
 #include <cstring>
 using namespace std;
- 
+
 class TrieNode {
 public:
     // Initialize your data structure here.
@@ -90,7 +211,7 @@ int main(){
     trie.insert("ab");
     cout<<trie.search("ab")<<endl;
     trie.insert("ab");
-    cout<<trie.search("ab")<<endl;  
+    cout<<trie.search("ab")<<endl;
     string s="string";
     return 0;
 }
